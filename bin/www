@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('express:server');
 var http = require('http');
+const {init, Post, User} = require('../models/init');
 
 /**
  * Get port from environment and store in Express.
@@ -25,6 +26,9 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
+// server.listen(port, async () => {
+//   await init();
+// });
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);

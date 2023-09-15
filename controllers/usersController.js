@@ -4,13 +4,13 @@ const controller = {};
 
 controller.all = async (req, res) => {
     try {
-        const postData = await model.post.findAll({
-            include: model.user
+        const userData = await model.user.findAll({
+            include: model.post
         });
-        if (postData.length > 0) {
+        if (userData.length > 0) {
             res
                 .status(200)
-                .json({message: "Connection successful", data: postData});
+                .json({message: "Connection successful", data: userData});
         } else {
             res.status(200).json({message: "Connection failed", data: []});
         }
@@ -21,18 +21,18 @@ controller.all = async (req, res) => {
 
 controller.store = async (req, res) => {
     try {
-        await model.post
+        await model.user
             .create({
-                title: req.body.title,
-                text: req.body.text,
-                userId: req.body.userId,
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password,
             })
             .then((result) => {
                 res.status(201).json({
                     message: "user successful created", data: {
-                        title: req.body.title,
-                        text: req.body.text,
-                        userId: req.body.userId,
+                        name: req.body.name,
+                        email: req.body.email,
+                        password: req.body.password,
                     },
                 });
             });
@@ -43,14 +43,14 @@ controller.store = async (req, res) => {
 
 controller.getById = async (req, res) => {
     try {
-        let postData = await model.post.findOne({
+        let userData = await model.user.findOne({
             where: {id: req.params.id},
-            include: model.user
+            include: model.post
         });
-        if (postData) {
-            res.status(200).json({message: "Success", data: postData});
+        if (userData) {
+            res.status(200).json({message: "Success", data: userData});
         } else {
-            res.status(200).json({message: "Post not found", data: []});
+            res.status(200).json({message: "User not found", data: []});
         }
     } catch (error) {
         res.status(404).json({message: error});
@@ -59,19 +59,19 @@ controller.getById = async (req, res) => {
 
 controller.update = async (req, res) => {
     try {
-        await model.post.findByPk(req.params.id).then(async (result) => {
+        await model.user.findByPk(req.params.id).then(async (result) => {
             if (result) {
-                await model.post.update({
-                        title: req.body.title,
-                        text: req.body.text,
-                        userId: req.body.userId,
+                await model.user.update({
+                        name: req.body.name,
+                        email: req.body.email,
+                        password: req.body.password
                     },
                     {
                         where: {
                             id: req.params.id
                         }
                     });
-                res.status(200).json({message: "Success"});
+                res.status(200).json({message: "Success", data: model.user});
             } else {
                 res.status(500).json({message: "update failed"});
             }
@@ -83,15 +83,15 @@ controller.update = async (req, res) => {
 
 controller.destroy = async (req, res) => {
     try {
-        await model.post.findByPk(req.params.id)
+        await model.user.findByPk(req.params.id)
             .then(async (result) => {
                 if (result) {
-                    await model.post.destroy({
+                    await model.user.destroy({
                         where: {id: req.params.id}
                     });
-                    res.status(200).json({message: "delete post successfully"});
+                    res.status(200).json({message: "delete user successfully"});
                 } else {
-                    res.status(404).json({message: "id post not found"});
+                    res.status(404).json({message: "id user not found"});
                 }
             });
     } catch (error) {
